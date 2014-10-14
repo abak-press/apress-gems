@@ -28,7 +28,7 @@ namespace :version do
 
   desc 'Generate CHANGELOG file'
   task :changelog do
-    spawn "bundle exec changelogger changelog '#{Dir.pwd}' --top_version='v#{current_version}' > CHANGELOG"
+    spawn "bundle exec changelogger '#{Dir.pwd}' --top_version='v#{current_version}' > CHANGELOG"
     spawn "git add CHANGELOG"
   end
 end
