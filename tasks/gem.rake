@@ -51,7 +51,7 @@ end
 
 task :check_git do
   `git rev-parse --abbrev-ref HEAD`.chomp.strip == 'master' || abort("Can be released only from `master` branch")
-  `git remove | grep upstream`.chomp.strip == 'upstream' || abort("Can be released only with `upstream` remote")
+  `git remote | grep upstream`.chomp.strip == 'upstream' || abort("Can be released only with `upstream` remote")
 end
 
 def upload_gem(repo_uri, tarball_name)
