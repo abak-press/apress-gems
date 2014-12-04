@@ -1,6 +1,6 @@
 
 #### [Current]
- * 2014-12-04 [101dad1](../../commit/101dad1) - __(bibendi)__ remove katip, make own awesome changelogger
+ * 2014-12-04 [6d1c394](../../commit/6d1c394) - __(bibendi)__ remove katip, make own awesome changelogger
 
 #### v0.1.0
  * 2014-12-04 [2549209](../../commit/2549209) - __(bibendi)__ Release 0.1.0
