@@ -28,7 +28,8 @@ namespace :version do
 
   desc 'Generate CHANGELOG file'
   task :changelog do
-    spawn "bundle exec changelogger '#{Dir.pwd}' --top_version='v#{current_version}' > CHANGELOG"
-    spawn "git add CHANGELOG"
+    require 'katip'
+    Katip::ChangeLogger.new.log_changes
+    spawn "git add CHANGELOG.md"
   end
 end
