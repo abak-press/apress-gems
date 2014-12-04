@@ -28,8 +28,9 @@ namespace :version do
 
   desc 'Generate CHANGELOG file'
   task :changelog do
-    require 'katip'
-    Katip::ChangeLogger.new.log_changes
+    require 'apress/gems/change_logger'
+
+    Apress::Gems::ChangeLogger.new.log_changes
     spawn "git add CHANGELOG.md"
   end
 end
