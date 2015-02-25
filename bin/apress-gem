@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'apress/gems/cli'
+
+options = {}
+
+opt_parser = OptionParser.new do |opt|
+  opt.banner = 'Usage: apress-gem COMMAND [OPTIONS]'
+  opt.separator ''
+  opt.separator 'Abak-Press Gem Releasing Tool'
+  opt.separator ''
+  opt.separator 'Commands'
+  opt.separator '    release: changelog, version, tag, build and upload'
+  opt.separator '    changelog: generate CHANGELOG.md'
+  opt.separator '    update_version: update const VERSION in lin/**/version.rb'
+  opt.separator '    build: make gem package'
+  opt.separator '    upload: upload package to gems.railsc.ru'
+  opt.separator '    current_version: show current gem version'
+  opt.separator ''
+
+  opt.separator 'Options'
+
+  opt.on('-h', '--help', 'help') do
+    puts opt_parser
+  end
+
+  opt.on('-v', '--version VERSION', 'new version, ex: -v 1.0.0') do |value|
+    options[:version] = value
+  end
+end
+
+opt_parser.parse!
+
+cli = Apress::Gems::Cli.new(options)
+
+if %w(release changelog build upload tag current_version update_version).include?(ARGV[0])
+  cli.public_send(ARGV[0])
+else
+  puts opt_parser
+end

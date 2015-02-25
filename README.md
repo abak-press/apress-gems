@@ -1,24 +1,16 @@
 # Apress::Gems
 
-Rake задачи для выпуска гема на gems.railsc.ru
+CLI tool для выпуска гема на gems.railsc.ru
 
 ## Installation
 
 Add this line to your gemspec:
 
-    spec.add_development_dependency 'apress-gems'
-    
-Rewrite Rakefile like this:
+    gem install apress-gems
 
-    require 'apress/gems/rake_tasks'
+## Usage
 
-## Gem Releasing:
-
-1. должен быть настроен git remote upstream и должны быть права на push
-1. git checkout master
-2. git pull upstream master
-3. правим версию гема в файле VERSION в корне гема. (читаем правила версионирования http://semver.org/)
-4. bundle exec rake release
+    bundle exec apress-gem --help
 
 ## Contributing
 

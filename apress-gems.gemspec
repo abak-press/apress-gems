@@ -8,9 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Apress::Gems::VERSION
   spec.authors       = ['merkushin']
   spec.email         = ['merkushin.m.s@gmail.com']
-  spec.summary       = 'Набор rake задач дял выпуска гема на railsc.ru'
-  spec.description   = 'Обязательно подключаемый гем для всех гемов apress-*'
-  spec.homepage      = ''
+  spec.summary       = 'CLI tool для выпуска гема на railsc.ru'
+  spec.homepage      = 'https://github.com/abak-press/apress-gems/fork'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -18,7 +17,9 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler', '>= 1.6'
-  spec.add_development_dependency 'rake'
+  spec.metadata['allowed_push_host'] = 'https://gems.railsc.ru'
+
+  spec.add_runtime_dependency 'apress-changelogger'
   spec.add_runtime_dependency 'multipart-post'
+  spec.add_runtime_dependency 'bundler'
 end
