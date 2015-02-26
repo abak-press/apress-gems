@@ -89,7 +89,7 @@ module Apress
         `git rev-parse --abbrev-ref HEAD`.chomp.strip == 'master' || abort('Can be released only from `master` branch')
         `git remote | grep upstream`.chomp.strip == 'upstream' || abort('Can be released only with `upstream` remote')
         spawn 'git pull upstream master'
-        spawn 'git pull --tags upstream'
+        spawn 'git fetch --tags upstream'
         spawn 'git push upstream master'
       end
 
@@ -121,7 +121,7 @@ module Apress
             ::Process.wait pid
           end
         end
-        abort "#{cmd} failed" unless $CHILD_STATUS && $CHILD_STATUS.exitstatus == 0
+        abort "#{cmd} failed, exit code #{$? && $?.exitstatus}" unless $? && $?.exitstatus == 0
       end
 
       def load_gemspec
