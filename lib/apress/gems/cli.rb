@@ -48,6 +48,7 @@ module Apress
       def tag
         tag_name = "v#{version}"
         spawn "git tag -a -m \"Version #{version}\" #{tag_name}"
+        spawn 'git push --tags upstream'
         puts "Git tag generated to #{tag_name}"
       end
 
@@ -62,6 +63,7 @@ module Apress
         changelog
         update_version
         commit
+        tag
         build
         upload
       end
@@ -97,7 +99,6 @@ module Apress
         puts 'Commit and push changes'
         spawn "git diff --cached --exit-code > /dev/null || git commit -m \"Release #{version}\" || echo -n"
         spawn 'git push upstream master'
-        spawn 'git push --tags upstream'
       end
 
       def validate_version
