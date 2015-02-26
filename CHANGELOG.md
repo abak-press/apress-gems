@@ -1,5 +1,10 @@
 
 #### [Current]
+ * 2015-02-26 [7c70898](../../commit/7c70898) - __(bibendi)__ fix checking exit status
+ * 2015-02-25 [daa47a9](../../commit/daa47a9) - __(bibendi)__ Make bin cli tool apress-gem
+
+#### v0.2.0
+ * 2014-12-04 [f8ff431](../../commit/f8ff431) - __(bibendi)__ Release 0.2.0
  * 2014-12-04 [6d1c394](../../commit/6d1c394) - __(bibendi)__ remove katip, make own awesome changelogger
 
 #### v0.1.0
