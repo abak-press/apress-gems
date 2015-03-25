@@ -28,6 +28,10 @@ opt_parser = OptionParser.new do |opt|
   opt.on('-v', '--version VERSION', 'new version, ex: -v 1.0.0') do |value|
     options[:version] = value
   end
+
+  opt.on('-b', '--branch BRANCH', 'branch, default master') do |value|
+    options[:branch] = value
+  end
 end
 
 opt_parser.parse!
