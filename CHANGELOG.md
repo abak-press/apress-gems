@@ -1,5 +1,9 @@
 
 #### [Current]
+ * 2015-03-25 [4482a25](../../commit/4482a25) - __(bibendi)__ Release from any branch
+
+#### v1.0.1
+ * 2015-02-26 [571cbf9](../../commit/571cbf9) - __(bibendi)__ Release 1.0.1
  * 2015-02-26 [620f3a3](../../commit/620f3a3) - __(bibendi)__ fix tagging
  * 2015-02-26 [075cb56](../../commit/075cb56) - __(bibendi)__ Release 1.0.0
  * 2015-02-26 [7c70898](../../commit/7c70898) - __(bibendi)__ fix checking exit status
