@@ -21,6 +21,8 @@ module Apress
       end
 
       def update_version
+        return if version == '0.0.1'
+
         Dir['lib/**/version.rb'].each do |file|
           contents = File.read(file)
           contents.gsub!(/VERSION\s*=\s*(['"])(.*?)\1/m, "VERSION = '#{version}'")
@@ -71,7 +73,11 @@ module Apress
       private
 
       def version
-        @options.fetch(:version)
+        @version ||= @options.fetch(:version)
+      end
+
+      def branch
+        @branch ||= @options.fetch(:branch, 'master')
       end
 
       def find_version
@@ -88,21 +94,20 @@ module Apress
       end
 
       def check_git
-        `git rev-parse --abbrev-ref HEAD`.chomp.strip == 'master' || abort('Can be released only from `master` branch')
+        `git rev-parse --abbrev-ref HEAD`.chomp.strip == branch || abort("Can be released only from `#{branch}` branch")
         `git remote | grep upstream`.chomp.strip == 'upstream' || abort('Can be released only with `upstream` remote')
-        spawn 'git pull upstream master'
+        spawn "git pull upstream #{branch}"
         spawn 'git fetch --tags upstream'
-        spawn 'git push upstream master'
       end
 
       def commit
         puts 'Commit and push changes'
         spawn "git diff --cached --exit-code > /dev/null || git commit -m \"Release #{version}\" || echo -n"
-        spawn 'git push upstream master'
+        spawn "git push upstream #{branch}"
       end
 
       def validate_version
-        puts version.inspect
+        return if version == '0.0.1'
         return if Gem::Version.new(version) > Gem::Version.new(find_version)
         raise 'New version less then current version'
       end
