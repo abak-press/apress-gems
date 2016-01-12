@@ -107,9 +107,12 @@ module Apress
       end
 
       def validate_version
-        return if version == '0.0.1'
+        fail "New gems should be released with version 0.1.0" if Gem::Version.new(version) < Gem::Version.new("0.1.0")
+
+        return if version == '0.1.0'
         return if Gem::Version.new(version) > Gem::Version.new(find_version)
-        raise 'New version less then current version'
+
+        fail 'New version less then current version'
       end
 
       # run +cmd+ in subprocess, redirect its stdout to parent's stdout
