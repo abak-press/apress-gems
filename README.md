@@ -6,11 +6,16 @@ CLI tool для выпуска гема на gems.railsc.ru
 
 Add this line to your gemspec:
 
+    gem sources -a https://gems.railsc.ru/
     gem install apress-gems
 
 ## Usage
 
-    bundle exec apress-gem --help
+    apress-gem release --version 1.0.0
+
+## More info
+
+    apress-gem --help
 
 ## Contributing
 
