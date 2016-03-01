@@ -1,5 +1,10 @@
 
 #### [Current]
+ * 2016-01-12 [987c179](../../commit/987c179) - __(Semyon Pupkov)__ fix(validation): do not validate version for 0.1.0
+ * 2016-01-12 [9f70529](../../commit/9f70529) - __(Semyon Pupkov)__ Update README
+
+#### v1.1.0
+ * 2015-03-25 [1e00f36](../../commit/1e00f36) - __(bibendi)__ Release 1.1.0
  * 2015-03-25 [4482a25](../../commit/4482a25) - __(bibendi)__ Release from any branch
 
 #### v1.0.1
