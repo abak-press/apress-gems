@@ -13,10 +13,10 @@ opt_parser = OptionParser.new do |opt|
   opt.separator 'Commands'
   opt.separator '    release: changelog, version, tag, build and upload'
   opt.separator '    changelog: generate CHANGELOG.md'
-  opt.separator '    update_version: update const VERSION in lin/**/version.rb'
+  opt.separator '    bump: update const VERSION in lin/**/version.rb'
   opt.separator '    build: make gem package'
   opt.separator '    upload: upload package to gems.railsc.ru'
-  opt.separator '    current_version: show current gem version'
+  opt.separator '    current: show current gem version'
   opt.separator ''
 
   opt.separator 'Options'
@@ -32,13 +32,21 @@ opt_parser = OptionParser.new do |opt|
   opt.on('-b', '--branch BRANCH', 'branch, default master') do |value|
     options[:branch] = value
   end
+
+  opt.on('-r', '--remote NAME', 'remote server name, default upstream') do |value|
+    options[:remote] = value
+  end
+
+  opt.on('-B', '--no-bump', 'no update version in version.rb') do
+    options[:bump] = false
+  end
 end
 
 opt_parser.parse!
 
 cli = Apress::Gems::Cli.new(options)
 
-if %w(release changelog build upload tag current_version update_version).include?(ARGV[0])
+if %w(release changelog build upload tag current bump).include?(ARGV[0])
   cli.public_send(ARGV[0])
 else
   puts opt_parser
