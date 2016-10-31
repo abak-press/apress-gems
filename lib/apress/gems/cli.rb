@@ -50,7 +50,7 @@ module Apress
       def tag
         tag_name = "v#{version}"
         spawn "git tag -a -m \"Version #{version}\" #{tag_name}"
-        spawn 'git push --tags upstream'
+        spawn "git push --tags #{repository}"
         puts "Git tag generated to #{tag_name}"
       end
 
@@ -80,6 +80,10 @@ module Apress
         @branch ||= @options.fetch(:branch, 'master')
       end
 
+      def repository
+        @repository ||= @options.fetch(:repository, 'upstream')
+      end
+
       def find_version
         Dir['lib/**/version.rb'].each do |file|
           contents = File.read(file)
@@ -95,15 +99,15 @@ module Apress
 
       def check_git
         `git rev-parse --abbrev-ref HEAD`.chomp.strip == branch || abort("Can be released only from `#{branch}` branch")
-        `git remote | grep upstream`.chomp.strip == 'upstream' || abort('Can be released only with `upstream` remote')
-        spawn "git pull upstream #{branch}"
-        spawn 'git fetch --tags upstream'
+        `git remote | grep #{repository}`.chomp.strip == repository || abort("Can be released only with `#{repository}` remote")
+        spawn "git pull #{repository} #{branch}"
+        spawn "git fetch --tags #{repository}"
       end
 
       def commit
         puts 'Commit and push changes'
         spawn "git diff --cached --exit-code > /dev/null || git commit -m \"Release #{version}\" || echo -n"
-        spawn "git push upstream #{branch}"
+        spawn "git push #{repository} #{branch}"
       end
 
       def validate_version

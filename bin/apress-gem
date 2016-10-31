@@ -32,6 +32,10 @@ opt_parser = OptionParser.new do |opt|
   opt.on('-b', '--branch BRANCH', 'branch, default master') do |value|
     options[:branch] = value
   end
+
+  opt.on('-r', '--repo REPOSITORY', 'tracked repository, default upstream') do |value|
+    options[:repository] = value
+  end
 end
 
 opt_parser.parse!
