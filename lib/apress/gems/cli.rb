@@ -70,6 +70,18 @@ module Apress
         upload
       end
 
+      def public_release
+        validate_version
+        check_git
+
+        changelog
+        update_version
+        commit
+        tag
+        build
+        `rake release`
+      end
+
       private
 
       def version
