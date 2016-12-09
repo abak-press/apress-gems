@@ -1,5 +1,9 @@
 
 #### [Current]
+ * 2016-10-17 [c35adb4](../../commit/c35adb4) - __(Michail Merkushin)__ Refactor version bumping
+
+#### v1.2.0
+ * 2016-03-01 [0c1dbf3](../../commit/0c1dbf3) - __(Michail Merkushin)__ Release 1.2.0
  * 2016-01-12 [987c179](../../commit/987c179) - __(Semyon Pupkov)__ fix(validation): do not validate version for 0.1.0
  * 2016-01-12 [9f70529](../../commit/9f70529) - __(Semyon Pupkov)__ Update README
 
