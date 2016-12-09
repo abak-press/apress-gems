@@ -16,12 +16,15 @@ module Apress
 
       def changelog
         Apress::ChangeLogger.new.log_changes
+
         spawn 'git add CHANGELOG.md'
+        spawn "git commit -m 'Update CHANGELOG.md"
+
         puts 'CHANGELOG.md generated'
       end
 
-      def update_version
-        return if version == '0.0.1'
+      def bump
+        validate_version
 
         Dir['lib/**/version.rb'].each do |file|
           contents = File.read(file)
@@ -29,6 +32,9 @@ module Apress
           File.write(file, contents)
           spawn "git add #{file}"
         end
+
+        spawn "git commit -m 'Release #{version}'"
+
         puts "VERSION updated to #{version}"
       end
 
@@ -49,23 +55,23 @@ module Apress
 
       def tag
         tag_name = "v#{version}"
+
         spawn "git tag -a -m \"Version #{version}\" #{tag_name}"
-        spawn 'git push --tags upstream'
+
         puts "Git tag generated to #{tag_name}"
       end
 
-      def current_version
+      def current
         puts "Current version is #{find_version}"
       end
 
       def release
-        validate_version
         check_git
 
+        bump if @options.fetch(:bump, true)
         changelog
-        update_version
-        commit
         tag
+        push
         build
         upload
       end
@@ -78,6 +84,10 @@ module Apress
 
       def branch
         @branch ||= @options.fetch(:branch, 'master')
+      end
+
+      def remote
+        @remote ||= @options.fetch(:remote, 'upstream')
       end
 
       def find_version
@@ -95,15 +105,16 @@ module Apress
 
       def check_git
         `git rev-parse --abbrev-ref HEAD`.chomp.strip == branch || abort("Can be released only from `#{branch}` branch")
-        `git remote | grep upstream`.chomp.strip == 'upstream' || abort('Can be released only with `upstream` remote')
-        spawn "git pull upstream #{branch}"
-        spawn 'git fetch --tags upstream'
+        `git remote | grep #{remote}`.chomp.strip == remote || abort("Can be released only with `#{remote}` remote")
+        spawn "git pull #{remote} #{branch}"
+        spawn "git fetch --tags #{remote}"
       end
 
-      def commit
-        puts 'Commit and push changes'
-        spawn "git diff --cached --exit-code > /dev/null || git commit -m \"Release #{version}\" || echo -n"
-        spawn "git push upstream #{branch}"
+      def push
+        puts 'Push changes to repository'
+
+        spawn "git push #{remote} #{branch}"
+        spawn "git push --tags #{remote}"
       end
 
       def validate_version
