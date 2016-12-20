@@ -1,5 +1,9 @@
 
 #### [Current]
+ * 2016-12-14 [6349477](../../commit/6349477) - __(Mikhail Nelaev)__ fix: add missing closing quote
+
+#### v1.3.0
+ * 2016-12-09 [c873563](../../commit/c873563) - __(Michail Merkushin)__ Release 1.3.0
  * 2016-10-17 [c35adb4](../../commit/c35adb4) - __(Michail Merkushin)__ Refactor version bumping
 
 #### v1.2.0
