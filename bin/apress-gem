@@ -40,6 +40,10 @@ opt_parser = OptionParser.new do |opt|
   opt.on('-B', '--no-bump', 'no update version in version.rb') do
     options[:bump] = false
   end
+
+  opt.on('-L', '--no-changelog', 'no generate changelog') do
+    options[:changelog] = false
+  end
 end
 
 opt_parser.parse!

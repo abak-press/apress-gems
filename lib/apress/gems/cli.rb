@@ -10,32 +10,26 @@ module Apress
       GEMS_URL = 'https://gems.railsc.ru/'.freeze
 
       def initialize(options)
-        @options = options
+        @options = {bump: true, changelog: true}.merge!(options)
+        @options[:version] = find_version unless @options[:bump]
+
         load_gemspec
       end
 
       def changelog
         Apress::ChangeLogger.new.log_changes
-
         spawn 'git add CHANGELOG.md'
-        spawn "git commit -m 'Update CHANGELOG.md'"
-
-        puts 'CHANGELOG.md generated'
+        puts 'Changelog generated'
       end
 
       def bump
         validate_version
-
-        Dir['lib/**/version.rb'].each do |file|
-          contents = File.read(file)
-          contents.gsub!(/VERSION\s*=\s*(['"])(.*?)\1/m, "VERSION = '#{version}'")
-          File.write(file, contents)
-          spawn "git add #{file}"
-        end
+        update_version
+        changelog if @options[:changelog]
 
         spawn "git commit -m 'Release #{version}'"
-
-        puts "VERSION updated to #{version}"
+        spawn "git push #{remote} #{branch}"
+        puts 'Changes pushed to repository'
       end
 
       def build
@@ -57,6 +51,7 @@ module Apress
         tag_name = "v#{version}"
 
         spawn "git tag -a -m \"Version #{version}\" #{tag_name}"
+        spawn "git push --tags #{remote}"
 
         puts "Git tag generated to #{tag_name}"
       end
@@ -67,11 +62,8 @@ module Apress
 
       def release
         check_git
-
-        bump if @options.fetch(:bump, true)
-        changelog
+        bump if @options[:bump]
         tag
-        push
         build
         upload
       end
@@ -97,6 +89,16 @@ module Apress
         end
       end
 
+      def update_version
+        Dir['lib/**/version.rb'].each do |file|
+          contents = File.read(file)
+          contents.gsub!(/VERSION\s*=\s*(['"])(.*?)\1/m, "VERSION = '#{version}'")
+          File.write(file, contents)
+          spawn "git add #{file}"
+          puts "Version updated to #{version}"
+        end
+      end
+
       def upload_uri
         uri = URI.parse(GEMS_URL)
         uri.userinfo = Bundler.settings[GEMS_URL]
@@ -110,20 +112,13 @@ module Apress
         spawn "git fetch --tags #{remote}"
       end
 
-      def push
-        puts 'Push changes to repository'
-
-        spawn "git push #{remote} #{branch}"
-        spawn "git push --tags #{remote}"
-      end
-
       def validate_version
         fail "New gems should be released with version 0.1.0" if Gem::Version.new(version) < Gem::Version.new("0.1.0")
 
         return if version == '0.1.0'
         return if Gem::Version.new(version) > Gem::Version.new(find_version)
 
-        fail 'New version less then current version'
+        fail 'New version less or equal then current version'
       end
 
       # run +cmd+ in subprocess, redirect its stdout to parent's stdout
