@@ -1,5 +1,9 @@
 
 #### [Current]
+ * 2017-03-10 [9c52211](../../commit/9c52211) - __(Michail Merkushin)__ Update version and changelog in single commit
+
+#### v1.3.1
+ * 2016-12-20 [5d2e296](../../commit/5d2e296) - __(Michail Merkushin)__ Release 1.3.1
  * 2016-12-14 [6349477](../../commit/6349477) - __(Mikhail Nelaev)__ fix: add missing closing quote
 
 #### v1.3.0
