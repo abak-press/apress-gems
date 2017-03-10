@@ -1,5 +1,10 @@
 
 #### [Current]
+ * 2017-03-10 [a0bdddc](../../commit/a0bdddc) - __(Michail Merkushin)__ Add no-pull option
+ * 2017-03-10 [df22f6f](../../commit/df22f6f) - __(Michail Merkushin)__ Add no-push option
+
+#### v2.0.0
+ * 2017-03-10 [dcbb238](../../commit/dcbb238) - __(Michail Merkushin)__ Release 2.0.0
  * 2017-03-10 [9c52211](../../commit/9c52211) - __(Michail Merkushin)__ Update version and changelog in single commit
 
 #### v1.3.1
