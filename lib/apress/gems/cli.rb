@@ -10,7 +10,7 @@ module Apress
       GEMS_URL = 'https://gems.railsc.ru/'.freeze
 
       def initialize(options)
-        @options = {bump: true, changelog: true, push: true}.merge!(options)
+        @options = {bump: true, changelog: true, pull: true, push: true}.merge!(options)
         @options[:version] = find_version unless @options[:bump]
 
         load_gemspec
@@ -64,7 +64,7 @@ module Apress
       end
 
       def release
-        check_git
+        pull_latest if @options[:pull]
         bump if @options[:bump]
         tag
         build
@@ -108,7 +108,7 @@ module Apress
         uri
       end
 
-      def check_git
+      def pull_latest
         `git rev-parse --abbrev-ref HEAD`.chomp.strip == branch || abort("Can be released only from `#{branch}` branch")
         `git remote | grep #{remote}`.chomp.strip == remote || abort("Can be released only with `#{remote}` remote")
         spawn "git pull #{remote} #{branch}"

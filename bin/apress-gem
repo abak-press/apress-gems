@@ -48,6 +48,10 @@ opt_parser = OptionParser.new do |opt|
   opt.on('-P', '--no-push', 'no push to remote repo') do
     options[:push] = false
   end
+
+  opt.on('-U', '--no-pull', 'no pull latest changes') do
+    options[:pull] = false
+  end
 end
 
 opt_parser.parse!
