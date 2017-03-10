@@ -10,7 +10,7 @@ module Apress
       GEMS_URL = 'https://gems.railsc.ru/'.freeze
 
       def initialize(options)
-        @options = {bump: true, changelog: true}.merge!(options)
+        @options = {bump: true, changelog: true, push: true}.merge!(options)
         @options[:version] = find_version unless @options[:bump]
 
         load_gemspec
@@ -28,8 +28,11 @@ module Apress
         changelog if @options[:changelog]
 
         spawn "git commit -m 'Release #{version}'"
-        spawn "git push #{remote} #{branch}"
-        puts 'Changes pushed to repository'
+
+        if @options[:push]
+          spawn "git push #{remote} #{branch}"
+          puts 'Changes pushed to repository'
+        end
       end
 
       def build
@@ -51,7 +54,7 @@ module Apress
         tag_name = "v#{version}"
 
         spawn "git tag -a -m \"Version #{version}\" #{tag_name}"
-        spawn "git push --tags #{remote}"
+        spawn "git push --tags #{remote}" if @options[:push]
 
         puts "Git tag generated to #{tag_name}"
       end

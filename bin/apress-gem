@@ -44,6 +44,10 @@ opt_parser = OptionParser.new do |opt|
   opt.on('-L', '--no-changelog', 'no generate changelog') do
     options[:changelog] = false
   end
+
+  opt.on('-P', '--no-push', 'no push to remote repo') do
+    options[:push] = false
+  end
 end
 
 opt_parser.parse!
