@@ -17,6 +17,7 @@ opt_parser = OptionParser.new do |opt|
   opt.separator '    build: make gem package'
   opt.separator '    upload: upload package to gems.railsc.ru'
   opt.separator '    current: show current gem version'
+  opt.separator '    exist: check for uploaded gem'
   opt.separator ''
 
   opt.separator 'Options'
@@ -33,7 +34,7 @@ opt_parser = OptionParser.new do |opt|
     options[:branch] = value
   end
 
-  opt.on('-r', '--remote NAME', 'remote server name, default upstream') do |value|
+  opt.on('-r', '--remote NAME', 'remote server name, default origin') do |value|
     options[:remote] = value
   end
 
@@ -52,13 +53,17 @@ opt_parser = OptionParser.new do |opt|
   opt.on('-U', '--no-pull', 'no pull latest changes') do
     options[:pull] = false
   end
+
+  opt.on('-q', '--quiet', 'silence command progress meter') do
+    options[:quiet] = true
+  end
 end
 
 opt_parser.parse!
 
 cli = Apress::Gems::Cli.new(options)
 
-if %w(release changelog build upload tag current bump).include?(ARGV[0])
+if %w(release changelog build upload tag current bump exist).include?(ARGV[0])
   cli.public_send(ARGV[0])
 else
   puts opt_parser
