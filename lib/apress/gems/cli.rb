@@ -22,8 +22,6 @@ module Apress
 
       def initialize(options)
         @options = DEFAULT_OPTIONS.merge(options)
-
-        load_gemspec
       end
 
       def changelog
@@ -48,15 +46,15 @@ module Apress
       def build
         FileUtils.mkdir_p('pkg')
 
-        spawn "gem build -V #{@spec_path}"
-        built_gem_path = Dir["#{@gemspec.name}-*.gem"].sort_by { |f| File.mtime(f) }.last
+        spawn "gem build -V #{spec_path}"
+        built_gem_path = Dir["#{gemspec.name}-*.gem"].sort_by { |f| File.mtime(f) }.last
 
         FileUtils.mv(built_gem_path, 'pkg')
         log 'Package built'
       end
 
       def upload
-        tarball_name = "#{@gemspec.name}-#{version_or_current}.gem"
+        tarball_name = "#{gemspec.name}-#{version_or_current}.gem"
         upload_gem(source_uri, tarball_name)
       end
 
@@ -117,7 +115,7 @@ module Apress
       end
 
       def exist?
-        cmd = "gem search #{@gemspec.name} --clear-sources -s '#{source_uri}' --exact --quiet -a"
+        cmd = "gem search #{gemspec.name} --clear-sources -s '#{source_uri}' --exact --quiet -a"
         output = spawn(cmd)
         escaped_version = Regexp.escape(version_or_current)
         !!(output =~ /[( ]#{escaped_version}[,)]/)
@@ -180,10 +178,21 @@ module Apress
       end
 
       def load_gemspec
+        return if defined?(@gemspec)
         gemspecs = Dir[File.join(Dir.pwd, '{,*}.gemspec')]
         raise 'Unable to determine name from existing gemspec' unless gemspecs.size == 1
         @spec_path = gemspecs.first
         @gemspec = Bundler.load_gemspec(@spec_path)
+      end
+
+      def gemspec
+        load_gemspec
+        @gemspec
+      end
+
+      def spec_path
+        load_gemspec
+        @spec_path
       end
 
       def upload_gem(repo_uri, tarball_name)
