@@ -23,7 +23,7 @@ opt_parser = OptionParser.new do |opt|
   opt.separator 'Options'
 
   opt.on('-h', '--help', 'help') do
-    puts opt_parser
+    options[:show_help] = true
   end
 
   opt.on('-v', '--version VERSION', 'new version, ex: -v 1.0.0') do |value|
@@ -65,10 +65,14 @@ end
 
 opt_parser.parse!
 
-cli = Apress::Gems::Cli.new(options)
+if options[:show_help]
+  puts opt_parser
+  exit
+end
 
-if %w(release changelog build upload tag current bump exist).include?(ARGV[0])
-  cli.public_send(ARGV[0])
+subcmd = ARGV[0]
+if %w(release changelog build upload tag current bump exist).include?(subcmd)
+  Apress::Gems::Cli.new(options).public_send(subcmd)
 else
   puts opt_parser
 end
