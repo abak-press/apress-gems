@@ -16,7 +16,8 @@ module Apress
         push: true,
         remote: "origin",
         branch: "master",
-        quiet: false
+        quiet: false,
+        source: 'https://gems.railsc.ru/'
       }.freeze
 
       def initialize(options)
@@ -56,7 +57,7 @@ module Apress
 
       def upload
         tarball_name = "#{@gemspec.name}-#{version_or_current}.gem"
-        upload_gem(upload_uri, tarball_name)
+        upload_gem(source_uri, tarball_name)
       end
 
       def tag
@@ -116,7 +117,7 @@ module Apress
       end
 
       def exist?
-        cmd = "gem search #{@gemspec.name} --clear-sources -s '#{upload_uri}' --exact --quiet -a"
+        cmd = "gem search #{@gemspec.name} --clear-sources -s '#{source_uri}' --exact --quiet -a"
         output = spawn(cmd)
         escaped_version = Regexp.escape(version_or_current)
         !!(output =~ /[( ]#{escaped_version}[,)]/)
@@ -132,10 +133,12 @@ module Apress
         end
       end
 
-      def upload_uri
-        uri = URI.parse(GEMS_URL)
-        uri.userinfo = Bundler.settings[GEMS_URL]
-        uri
+      def source_uri
+        return @uri if defined?(@uri)
+        source_url = @options.fetch(:source)
+        @uri = URI.parse(source_url)
+        @uri.userinfo = Bundler.settings[source_url]
+        @uri
       end
 
       def pull_latest

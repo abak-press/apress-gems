@@ -57,6 +57,10 @@ opt_parser = OptionParser.new do |opt|
   opt.on('-q', '--quiet', 'silence command progress meter') do
     options[:quiet] = true
   end
+
+  opt.on('-s', '--source URL', 'url of gem source, default https://gems.railsc.ru/') do |value|
+    options[:source] = value
+  end
 end
 
 opt_parser.parse!
