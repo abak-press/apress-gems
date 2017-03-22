@@ -1,0 +1,3 @@
+#!/bin/bash -e
+
+apress-gem exist --quiet || apress-gem release --no-bump --no-pull

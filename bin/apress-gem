@@ -17,12 +17,13 @@ opt_parser = OptionParser.new do |opt|
   opt.separator '    build: make gem package'
   opt.separator '    upload: upload package to gems.railsc.ru'
   opt.separator '    current: show current gem version'
+  opt.separator '    exist: check for uploaded gem'
   opt.separator ''
 
   opt.separator 'Options'
 
   opt.on('-h', '--help', 'help') do
-    puts opt_parser
+    options[:show_help] = true
   end
 
   opt.on('-v', '--version VERSION', 'new version, ex: -v 1.0.0') do |value|
@@ -33,7 +34,7 @@ opt_parser = OptionParser.new do |opt|
     options[:branch] = value
   end
 
-  opt.on('-r', '--remote NAME', 'remote server name, default upstream') do |value|
+  opt.on('-r', '--remote NAME', 'remote server name, default origin') do |value|
     options[:remote] = value
   end
 
@@ -52,14 +53,26 @@ opt_parser = OptionParser.new do |opt|
   opt.on('-U', '--no-pull', 'no pull latest changes') do
     options[:pull] = false
   end
+
+  opt.on('-q', '--quiet', 'silence command progress meter') do
+    options[:quiet] = true
+  end
+
+  opt.on('-s', '--source URL', 'url of gem source, default https://gems.railsc.ru/') do |value|
+    options[:source] = value
+  end
 end
 
 opt_parser.parse!
 
-cli = Apress::Gems::Cli.new(options)
+if options[:show_help]
+  puts opt_parser
+  exit
+end
 
-if %w(release changelog build upload tag current bump).include?(ARGV[0])
-  cli.public_send(ARGV[0])
+subcmd = ARGV[0]
+if %w(release changelog build upload tag current bump exist).include?(subcmd)
+  Apress::Gems::Cli.new(options).public_send(subcmd)
 else
   puts opt_parser
 end

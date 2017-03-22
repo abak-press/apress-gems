@@ -9,17 +9,25 @@ module Apress
     class Cli
       GEMS_URL = 'https://gems.railsc.ru/'.freeze
 
-      def initialize(options)
-        @options = {bump: true, changelog: true, pull: true, push: true}.merge!(options)
-        @options[:version] = find_version unless @options[:bump]
+      DEFAULT_OPTIONS = {
+        bump: true,
+        changelog: true,
+        pull: true,
+        push: true,
+        remote: "origin",
+        branch: "master",
+        quiet: false,
+        source: 'https://gems.railsc.ru/'
+      }.freeze
 
-        load_gemspec
+      def initialize(options)
+        @options = DEFAULT_OPTIONS.merge(options)
       end
 
       def changelog
         Apress::ChangeLogger.new.log_changes
         spawn 'git add CHANGELOG.md'
-        puts 'Changelog generated'
+        log 'Changelog generated'
       end
 
       def bump
@@ -31,36 +39,46 @@ module Apress
 
         if @options[:push]
           spawn "git push #{remote} #{branch}"
-          puts 'Changes pushed to repository'
+          log 'Changes pushed to repository'
         end
       end
 
       def build
         FileUtils.mkdir_p('pkg')
 
-        spawn "gem build -V #{@spec_path}"
-        built_gem_path = Dir["#{@gemspec.name}-*.gem"].sort_by { |f| File.mtime(f) }.last
+        spawn "gem build -V #{spec_path}"
+        built_gem_path = Dir["#{gemspec.name}-*.gem"].sort_by { |f| File.mtime(f) }.last
 
         FileUtils.mv(built_gem_path, 'pkg')
-        puts 'Package built'
+        log 'Package built'
       end
 
       def upload
-        tarball_name = "#{@gemspec.name}-#{version}.gem"
-        upload_gem(upload_uri, tarball_name)
+        tarball_name = "#{gemspec.name}-#{version_or_current}.gem"
+        upload_gem(source_uri, tarball_name)
       end
 
       def tag
-        tag_name = "v#{version}"
+        tag_name = "v#{version_or_current}"
 
-        spawn "git tag -a -m \"Version #{version}\" #{tag_name}"
+        spawn "git tag -a -m \"Version #{version_or_current}\" #{tag_name}"
         spawn "git push --tags #{remote}" if @options[:push]
 
-        puts "Git tag generated to #{tag_name}"
+        log "Git tag generated to #{tag_name}"
       end
 
       def current
-        puts "Current version is #{find_version}"
+        puts find_version
+      end
+
+      def exist
+        if exist?
+          log "Gem already released"
+          exit(0)
+        else
+          log "Gem is not released"
+          exit(1)
+        end
       end
 
       def release
@@ -77,12 +95,16 @@ module Apress
         @version ||= @options.fetch(:version)
       end
 
+      def version_or_current
+        @version_or_current ||= @options.fetch(:version, find_version)
+      end
+
       def branch
-        @branch ||= @options.fetch(:branch, 'master')
+        @branch ||= @options.fetch(:branch)
       end
 
       def remote
-        @remote ||= @options.fetch(:remote, 'upstream')
+        @remote ||= @options.fetch(:remote)
       end
 
       def find_version
@@ -92,25 +114,32 @@ module Apress
         end
       end
 
+      def exist?
+        cmd = "gem search #{gemspec.name} --clear-sources -s '#{source_uri}' --exact --quiet -a"
+        output = spawn(cmd)
+        escaped_version = Regexp.escape(version_or_current)
+        !!(output =~ /[( ]#{escaped_version}[,)]/)
+      end
+
       def update_version
         Dir['lib/**/version.rb'].each do |file|
           contents = File.read(file)
-          contents.gsub!(/VERSION\s*=\s*(['"])(.*?)\1/m, "VERSION = '#{version}'")
+          contents.gsub!(/VERSION\s*=\s*(['"])(.*?)\1/m, "VERSION = '#{version}'.freeze")
           File.write(file, contents)
           spawn "git add #{file}"
-          puts "Version updated to #{version}"
+          log "Version updated to #{version}"
         end
       end
 
-      def upload_uri
-        uri = URI.parse(GEMS_URL)
-        uri.userinfo = Bundler.settings[GEMS_URL]
-        uri
+      def source_uri
+        return @uri if defined?(@uri)
+        source_url = @options.fetch(:source)
+        @uri = URI.parse(source_url)
+        @uri.userinfo = Bundler.settings[source_url]
+        @uri
       end
 
       def pull_latest
-        `git rev-parse --abbrev-ref HEAD`.chomp.strip == branch || abort("Can be released only from `#{branch}` branch")
-        `git remote | grep #{remote}`.chomp.strip == remote || abort("Can be released only with `#{remote}` remote")
         spawn "git pull #{remote} #{branch}"
         spawn "git fetch --tags #{remote}"
       end
@@ -126,13 +155,17 @@ module Apress
 
       # run +cmd+ in subprocess, redirect its stdout to parent's stdout
       def spawn(cmd)
-        puts ">> #{cmd}"
+        log ">> #{cmd}"
 
         cmd += ' 2>&1'
+        output = ""
         PTY.spawn cmd do |r, _w, pid|
           begin
             r.sync
-            r.each_char { |chr| STDOUT.write(chr) }
+            r.each_char do |chr|
+              STDOUT.write(chr) unless @options[:quiet]
+              output << chr
+            end
           rescue Errno::EIO
             # simply ignoring this
           ensure
@@ -140,19 +173,32 @@ module Apress
           end
         end
         abort "#{cmd} failed, exit code #{$? && $?.exitstatus}" unless $? && $?.exitstatus == 0
+
+        output.strip
       end
 
       def load_gemspec
+        return if defined?(@gemspec)
         gemspecs = Dir[File.join(Dir.pwd, '{,*}.gemspec')]
         raise 'Unable to determine name from existing gemspec' unless gemspecs.size == 1
         @spec_path = gemspecs.first
         @gemspec = Bundler.load_gemspec(@spec_path)
       end
 
+      def gemspec
+        load_gemspec
+        @gemspec
+      end
+
+      def spec_path
+        load_gemspec
+        @spec_path
+      end
+
       def upload_gem(repo_uri, tarball_name)
         repo_uri.path = '/upload'
 
-        puts "Start uploading gem #{tarball_name} to #{repo_uri.host}"
+        log "Start uploading gem #{tarball_name} to #{repo_uri.host}"
 
         tarball_path = File.join('pkg', tarball_name)
 
@@ -167,12 +213,17 @@ module Apress
           end
 
           if [200, 302].include?(res.code.to_i)
-            puts "#{tarball_name} uploaded successfully"
+            log "#{tarball_name} uploaded successfully"
           else
             $stderr.puts "Cannot upload #{tarball_name}. Response status: #{res.code}"
             exit(1)
           end
         end
+      end
+
+      def log(message)
+        return if @options[:quiet]
+        puts message
       end
     end
   end
