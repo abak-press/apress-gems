@@ -1,5 +1,13 @@
 
 #### [Current]
+ * 2017-03-22 [7c9c3b6](../../commit/7c9c3b6) - __(Michail Merkushin)__ Add Dockerfile and script for autopublication
+ * 2017-03-22 [69fa54c](../../commit/69fa54c) - __(Michail Merkushin)__ Don't load gemspec on init
+ * 2017-03-22 [cd764ac](../../commit/cd764ac) - __(Michail Merkushin)__ Fix help duplication
+ * 2017-03-22 [abdfc8d](../../commit/abdfc8d) - __(Michail Merkushin)__ Add option for define url of gem source
+ * 2017-03-22 [f4c592b](../../commit/f4c592b) - __(Michail Merkushin)__ Check for uploaded gem. Change remote to origin by default
+
+#### v2.1.0
+ * 2017-03-10 [776f9d7](../../commit/776f9d7) - __(Michail Merkushin)__ Release 2.1.0
  * 2017-03-10 [a0bdddc](../../commit/a0bdddc) - __(Michail Merkushin)__ Add no-pull option
  * 2017-03-10 [df22f6f](../../commit/df22f6f) - __(Michail Merkushin)__ Add no-push option
 
