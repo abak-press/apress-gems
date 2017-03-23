@@ -124,7 +124,7 @@ module Apress
       def update_version
         Dir['lib/**/version.rb'].each do |file|
           contents = File.read(file)
-          contents.gsub!(/VERSION\s*=\s*(['"])(.*?)\1/m, "VERSION = '#{version}'.freeze")
+          contents.gsub!(/VERSION\s*=\s*(['"])(.*?)\1.*/m, "VERSION = '#{version}'.freeze")
           File.write(file, contents)
           spawn "git add #{file}"
           log "Version updated to #{version}"
