@@ -1,5 +1,8 @@
 
 #### [Current]
+ * 2017-03-23 [e19a8d1](../../commit/e19a8d1) - __(Michail Merkushin)__ Fix version.rb after failed release
+ * 2017-03-23 [1892b46](../../commit/1892b46) - __(Michail Merkushin)__ fix: REGEXP for version update, try 2
+ * 2017-03-23 [d226b5d](../../commit/d226b5d) - __(Michail Merkushin)__ Release 3.0.1
  * 2017-03-23 [ef4f929](../../commit/ef4f929) - __(Denis Korobicyn)__ fix: REGEXP for version update
 
 #### v3.0.0
