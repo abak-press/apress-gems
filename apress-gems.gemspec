@@ -22,4 +22,9 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'apress-changelogger'
   spec.add_runtime_dependency 'multipart-post'
   spec.add_runtime_dependency 'bundler'
+
+  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'fakefs'
 end
