@@ -1,3 +1,14 @@
 #!/bin/bash -e
 
-apress-gem exist --quiet || apress-gem release --no-bump --no-pull
+apress-gem exist --quiet 2>&1 && exit
+
+git fetch --tags origin
+git log --date=short --no-merges --pretty=format:"_ref_begin_ %d _ref_end_ * %ad [%h](../../commit/%h) - __(%an)__ %s %+b" | sed -e '/^\s*$/d' | sed -e 's/^_ref_begin_  _ref_end_//g' | sed -re 's/_ref_begin_ (.*?) _ref_end_/\n# \1\n\n/g' > CHANGELOG.md
+git add CHANGELOG.md
+git commit -m "Update CHANGELOG.md"
+
+apress-gem build
+apress-gem upload
+
+git push origin $(git rev-parse --abbrev-ref HEAD)
+apress-gem tag
