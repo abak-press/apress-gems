@@ -1,5 +1,9 @@
 
 #### [Current]
+ * 2017-03-23 [ef4f929](../../commit/ef4f929) - __(Denis Korobicyn)__ fix: REGEXP for version update
+
+#### v3.0.0
+ * 2017-03-22 [85bf19e](../../commit/85bf19e) - __(Michail Merkushin)__ Release 3.0.0
  * 2017-03-22 [7c9c3b6](../../commit/7c9c3b6) - __(Michail Merkushin)__ Add Dockerfile and script for autopublication
  * 2017-03-22 [69fa54c](../../commit/69fa54c) - __(Michail Merkushin)__ Don't load gemspec on init
  * 2017-03-22 [cd764ac](../../commit/cd764ac) - __(Michail Merkushin)__ Fix help duplication
