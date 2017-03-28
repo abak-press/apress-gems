@@ -1,3 +1,4 @@
+require 'apress/gems/cli'
 require 'apress/gems/version'
 
 module Apress
