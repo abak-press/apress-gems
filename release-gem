@@ -3,16 +3,8 @@
 apress-gem exist --quiet 2>&1 && exit
 
 git fetch --tags origin
-echo "#  (tag: v$(apress-gem current))" > CHANGELOG.md
-echo "" >> CHANGELOG.md
 
-git log --topo-order --date=short --no-merges \
-  --pretty=format:"_ref_begin_ %d _ref_end_ * %ad [%h](../../commit/%h) - __(%an)__ %s %+b" |
-  sed -e '/^\s*$/d' |
-  sed -e 's/^_ref_begin_  _ref_end_//g' |
-  sed -re 's/_ref_begin_ (.*?) _ref_end_/\n# \1\n\n/g' >> \
-  CHANGELOG.md
-
+generate-changelog | sed -e "s/# HEAD/# v$(apress-gem current)/" > CHANGELOG.md
 git add CHANGELOG.md
 git commit -m "Update CHANGELOG.md"
 

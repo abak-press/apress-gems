@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+log_cmd = 'git log --date=short --no-merges --pretty=format:"* %ad [%h](../../commit/%h) - __(%an)__ %s %+b"'
+
+tags = `git tag --list v* --sort=v:refname`.split("\n") << 'HEAD'
+
+prev_tag = nil
+log = []
+
+tags.each do |tag|
+  entry = "# #{tag}\n\n"
+
+  entry << if prev_tag
+    `#{log_cmd} "#{prev_tag}".."#{tag}"`
+  else
+    `#{log_cmd} "#{tag}"`
+  end
+
+  entry = entry.split("\n").reject do |row|
+    row =~ /Update CHANGELOG.md/ || row =~ /Release v?#{tag.sub('v', '')}/
+  end.join("\n")
+
+  log << entry
+  prev_tag = tag
+end
+
+puts log.reverse.join("\n\n")
