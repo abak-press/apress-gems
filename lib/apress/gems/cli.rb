@@ -56,7 +56,7 @@ module Apress
 
       def upload
         if @options[:public]
-          spawn "gem push #{tarball_name}"
+          spawn "gem push #{File.join('pkg', tarball_name)}"
         else
           upload_gem(source_uri, tarball_name)
         end
