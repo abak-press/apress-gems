@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-apress-gem exist --quiet 2>&1 && exit
+apress-gem $@ exist --quiet 2>&1 && exit
 
 git fetch --tags origin
 
@@ -8,8 +8,8 @@ generate-changelog | sed -e "s/# HEAD/# v$(apress-gem current)/" > CHANGELOG.md
 git add CHANGELOG.md
 git commit -m "Update CHANGELOG.md"
 
-apress-gem build
-apress-gem upload
+apress-gem $@ build
+apress-gem $@ upload
 
 git push origin $(git rev-parse --abbrev-ref HEAD)
-apress-gem tag
+apress-gem $@ tag

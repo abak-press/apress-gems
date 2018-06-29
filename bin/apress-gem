@@ -61,6 +61,10 @@ opt_parser = OptionParser.new do |opt|
   opt.on('-s', '--source URL', 'url of gem source, default https://gems.railsc.ru/') do |value|
     options[:source] = value
   end
+
+  opt.on('-p', '--public', 'gem is public from rubygems.org') do |value|
+    options[:public] = true
+  end
 end
 
 opt_parser.parse!

@@ -10,6 +10,7 @@ module Apress
       GEMS_URL = 'https://gems.railsc.ru/'.freeze
 
       DEFAULT_OPTIONS = {
+        public: false,
         bump: true,
         changelog: true,
         pull: true,
@@ -54,8 +55,11 @@ module Apress
       end
 
       def upload
-        tarball_name = "#{gemspec.name}-#{version_or_current}.gem"
-        upload_gem(source_uri, tarball_name)
+        if @options[:public]
+          spawn "gem push #{File.join('pkg', tarball_name)}"
+        else
+          upload_gem(source_uri, tarball_name)
+        end
       end
 
       def tag
@@ -115,7 +119,11 @@ module Apress
       end
 
       def exist?
-        cmd = "gem search #{gemspec.name} --clear-sources -s '#{source_uri}' --exact --quiet -a"
+        cmd = if @options[:public]
+                "gem search #{gemspec.name} --exact --quiet -a"
+              else
+                "gem search #{gemspec.name} --clear-sources -s '#{source_uri}' --exact --quiet -a"
+              end
         output = spawn(cmd)
         escaped_version = Regexp.escape(version_or_current)
         !!(output =~ /[( ]#{escaped_version}[,)]/)
@@ -193,6 +201,10 @@ module Apress
       def spec_path
         load_gemspec
         @spec_path
+      end
+
+      def tarball_name
+        "#{gemspec.name}-#{version_or_current}.gem"
       end
 
       def upload_gem(repo_uri, tarball_name)
